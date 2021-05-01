@@ -1,0 +1,16 @@
+trigger AnnualMaintenance on Vehicle__c (after insert) {
+    System.debug('Trigger started');
+            Maintenance_Request__c mr=new Maintenance_Request__c();
+ for(Vehicle__c v : Trigger.New)  {
+     System.debug('Inside Vehicle loop');
+     Integer noOfDays = v.Last_Service_Date__c.monthsBetween(date.today());
+     if(v.Last_Known_Odometer_Reading__c >= 1000 ||  noOfDays > 12){
+         mr.Name = v.Name+'request';
+         mr.Maintenance_Date__c = date.today();
+         mr.Odometer_Reading__c = v.Last_Known_Odometer_Reading__c;
+         mr.Status__c = 'In Progress';
+         insert mr;
+         System.debug('Inserted mr');
+}
+}
+}
